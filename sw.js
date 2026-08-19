@@ -1,6 +1,6 @@
 /* Bump CACHE_VERSION after ANY edit to config.js / app.js / style.css,
    otherwise her phone keeps serving the old cached copy. */
-const CACHE_VERSION = 'chores-v1';
+const CACHE_VERSION = 'chores-8e52c513';
 const ASSETS = ['./', './index.html', './style.css', './config.js', './app.js',
                 './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
