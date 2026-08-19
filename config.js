@@ -9,7 +9,24 @@ const CONFIG = {
   lang: 'he',
 
   // Girl's name, shown in the header. Empty string hides it.
-  kidName: '',
+  kidName: 'אורי',
+
+  /* -------------------------------------------------------------------------
+     HER DAYS — the 14-day custody rotation, 7 of every 14 days.
+     Used only by the streak: a day she is not here can never break it, and only
+     a day she IS here and did nothing does.
+
+       streakMode  'her-days' = only days she's here can break the streak
+                   'calendar' = every day counts, so a stay away breaks it
+       cycleAnchor a Sunday that starts a Week A; the cycle repeats every 14 days
+       weekA/weekB weekday numbers she is here, 0=Sun … 6=Sat
+     ------------------------------------------------------------------------- */
+  schedule: {
+    streakMode: 'her-days',
+    cycleAnchor: '2026-05-24',
+    weekA: [0, 2, 5, 6],   // Sun, Tue, Fri, Sat
+    weekB: [1, 2, 4],      // Mon, Tue, Thu
+  },
 
   /* -------------------------------------------------------------------------
      THE ROTATION — one per day, strictly in this order, looping forever.

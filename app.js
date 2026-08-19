@@ -62,12 +62,38 @@ const upNext   = () => CONFIG.rotation[(state.pointer + 1) % CONFIG.rotation.len
 const dayDone  = () => state.log.some(e => e.date === todayKey() && (e.type === 'done' || e.type === 'substitute'));
 const bonusById = id => CONFIG.bonus.find(b => b.id === id);
 
+/* Is `d` one of her days? 14-day cycle: first 7 days from the anchor are week A,
+   the next 7 week B. Date-only UTC arithmetic, so DST can't shift the cycle. */
+function isHerDay(d) {
+  const sc = CONFIG.schedule;
+  if (!sc) return true;
+  const [y, m, dd] = sc.cycleAnchor.split('-').map(Number);
+  const diff = Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())
+                         - Date.UTC(y, m - 1, dd)) / 86400000);
+  const idx = ((diff % 14) + 14) % 14;
+  return (idx < 7 ? sc.weekA : sc.weekB).includes(d.getDay());
+}
+
+/* Consecutive days she showed up for. A day she isn't here is stepped over: it
+   neither counts nor breaks. Only a day she IS here with nothing done breaks it.
+   Set schedule.streakMode to 'calendar' to make every missed day break it. */
 function streak() {
   const days = new Set(state.log.filter(e => e.type === 'done' || e.type === 'substitute').map(e => e.date));
+  if (!days.size) return 0;
+  const oldest = [...days].sort()[0];
+  const byCalendar = CONFIG.schedule?.streakMode === 'calendar';
+  const key = d => d.toLocaleDateString('en-CA');
+
   let n = 0;
   const d = new Date();
-  if (!days.has(d.toLocaleDateString('en-CA'))) d.setDate(d.getDate() - 1);
-  while (days.has(d.toLocaleDateString('en-CA'))) { n++; d.setDate(d.getDate() - 1); }
+  if (!days.has(key(d))) d.setDate(d.getDate() - 1);   // today isn't over yet
+  for (let guard = 0; guard < 800; guard++) {
+    const k = key(d);
+    if (k < oldest) break;
+    if (days.has(k)) n++;
+    else if (byCalendar || isHerDay(d)) break;
+    d.setDate(d.getDate() - 1);
+  }
   return n;
 }
 
