@@ -1,6 +1,6 @@
-/* Bump CACHE_VERSION after ANY edit to config.js / app.js / style.css,
-   otherwise her phone keeps serving the old cached copy. */
-const CACHE_VERSION = 'chores-8e52c513';
+/* CACHE_VERSION is stamped by deploy.sh from a hash of the app files —
+   don't hand-edit it. The value below is only used when serving locally. */
+const CACHE_VERSION = 'chores-c8b76183';
 const ASSETS = ['./', './index.html', './style.css', './config.js', './app.js',
                 './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
